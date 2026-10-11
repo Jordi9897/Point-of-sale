@@ -1,2 +1,111 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+#"""
+Point of Sale (POS) command-line system.
+
+Requirements implemented:
+- Runs entirely on the command line (CMD)
+- Stores every item added in a List
+- Can clear the stored output (start a new sale)
+- Every POS operation lives in its own function
+- Uses a for-loop with a sentinel variable to exit the main menu loop
+- Displays all stored products with prices and a total
+"""
+
+# Global list that stores every item added during the current session.
+# Each item is stored as a tuple: (product_name, price)
+products = []
+
+
+def add_product():
+    """
+    Adds a single product to the 'products' list.
+    Asks the user for a product name and a price, then stores
+    them together as a tuple in the global 'products' list.
+    """
+    name = input("Enter product name: ").strip()
+    try:
+        price = float(input("Enter product price (e.g. 50.00): "))
+    except ValueError:
+        print("Invalid price. Product not added.")
+        return
+    products.append((name, price))
+    print(f"'{name}' added at R{price:.2f}")
+
+
+def clear_products():
+    """
+    Clears the stored output.
+    Empties the 'products' list so a new sale can be started fresh.
+    """
+    products.clear()
+    print("All stored products have been cleared.")
+
+
+def display_products():
+    """
+    Displays every stored product with its price, followed by the
+    total of all product prices, formatted as a simple receipt.
+    """
+    if not products:
+        print("No products have been added yet.")
+        return
+
+    print()
+    total = 0.0
+    # Loop through every product currently stored and print it out,
+    # left-aligned in a fixed-width column so prices line up.
+    for name, price in products:
+        print(f"{name:<10}R{price:.2f}")
+        total += price
+
+    print("-" * 15)
+    print(f"{'Totaal':<10}R{total:.2f}")
+    print()
+
+
+def show_menu():
+    """
+    Displays the main menu options to the user.
+    """
+    print("\n===== POS MENU =====")
+    print("1. Add product")
+    print("2. Display products and total")
+    print("3. Clear all products")
+    print("4. Exit")
+
+
+def run_pos():
+    """
+    Runs the main POS program loop.
+    Uses a for-loop with a sentinel variable ('running') that is
+    checked each iteration; setting it to False breaks the loop
+    and ends the program.
+    """
+    running = True  # sentinel variable controlling the loop
+
+    # A for-loop over an effectively endless range acts as the main
+    # loop here; the sentinel variable 'running' is what actually
+    # controls when it stops, as required by the assignment.
+    for _ in iter(int, 1):  # loops "forever" until broken by the sentinel
+        if not running:
+            break
+
+        show_menu()
+        choice = input("Choose an option (1-4): ").strip()
+
+        if choice == "1":
+            add_product()
+        elif choice == "2":
+            display_products()
+        elif choice == "3":
+            clear_products()
+        elif choice == "4":
+            running = False  # sentinel updated to exit the loop
+            print("Exiting POS. Goodbye!")
+        else:
+            print("Invalid option. Please choose 1-4.")
+
+
+# Entry point: only runs the POS when this file is executed directly
+# from the command line (not when imported as a module).
+if __name__ == "__main__":
+    run_pos()
